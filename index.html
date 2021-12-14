@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.rawgit.com/matfish2/vue-tables-2/master/dist/vue-tables-2.min.js"></script>
+    <!-- <script src="./main.js"></script> -->
+  </head>
+  <body>
+    <h1 class="vue-title">Vue Tables 2 Editable Demo</h1>
+
+    <div id="app">
+      <v-client-table :columns="columns" :data="tableData" :options="options">
+        <a
+          slot="uri"
+          slot-scope="props"
+          target="_blank"
+          :href="props.row.uri"
+          class="glyphicon glyphicon-eye-open"
+        ></a>
+      </v-client-table>
+    </div>
+  </body>
+  <script>
+    Vue.use(VueTables.ClientTable);
+
+    axios
+      .get("https://restcountries.com/v2/all")
+      .then(function (response) {
+        // handle success
+        this.tableData = response.data;
+        console.log(this.tableData);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+
+    new Vue({
+      el: "#app",
+      data: {
+        columns: ["name", "code", "uri"],
+        tableData: [],
+        options: {
+          headings: {
+            name: "Country Name",
+            code: "Country Code",
+            uri: "View Record",
+          },
+          sortable: ["name", "code"],
+          filterable: ["name", "code"],
+        },
+      },
+    });
+  </script>
+</html>
