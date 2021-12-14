@@ -15,47 +15,62 @@
 
     <div id="app">
       <v-client-table :columns="columns" :data="tableData" :options="options">
-        <a
+        <!-- <a
           slot="uri"
           slot-scope="props"
           target="_blank"
           :href="props.row.uri"
           class="glyphicon glyphicon-eye-open"
-        ></a>
+        ></a> -->
       </v-client-table>
     </div>
   </body>
   <script>
     Vue.use(VueTables.ClientTable);
 
-    axios
-      .get("https://restcountries.com/v2/all")
-      .then(function (response) {
-        // handle success
-        this.tableData = response.data;
-        console.log(this.tableData);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      })
-      .then(function () {
-        // always executed
-      });
+    function getData() {
+      axios
+        .get(
+          // "https://restcountries.com/v3/all?fields=flag,name,cca2,cca3,altSpellings,idd"
+          "https://restcountries.com/v3/all?fields=cca2,cca3"
+        )
+        .then(function (response) {
+          // handle success
+          return response.data;
+          console.log(response.data);
+        });
+    }
 
     new Vue({
       el: "#app",
       data: {
-        columns: ["name", "code", "uri"],
-        tableData: [],
+        columns: [
+          //   "flag",
+          //   "name",
+          "cca2",
+          "cca3",
+          //   "nativeName",
+          //   "altSpellings",
+          //   "idd",
+        ],
+        tableData: getData(),
         options: {
           headings: {
-            name: "Country Name",
-            code: "Country Code",
-            uri: "View Record",
+            // flag: "國旗",
+            // name: "國家名稱",
+            cca2: "2 位國家代碼",
+            cca3: "3 位國家代碼",
+            // nativeName: "母語名稱",
+            // altSpellings: "替代國家名稱",
+            // idd: "國際電話區號",
           },
-          sortable: ["name", "code"],
-          filterable: ["name", "code"],
+          //   values: {
+          //     nmae: function (row, index) {
+          //       return row.official;
+          //     },
+          //   },
+          //   sortable: ["name", "code"],
+          //   filterable: ["name", "code"],
         },
       },
     });
