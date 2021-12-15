@@ -5,24 +5,41 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.rawgit.com/matfish2/vue-tables-2/master/dist/vue-tables-2.min.js"></script>
     <!-- <script src="./main.js"></script> -->
   </head>
   <body>
-    <h1 class="vue-title">Vue Tables 2 Editable Demo</h1>
-
     <div id="app">
-      <v-client-table :columns="columns" :data="tableData" :options="options">
-        <!-- <a
-          slot="uri"
-          slot-scope="props"
-          target="_blank"
-          :href="props.row.uri"
-          class="glyphicon glyphicon-eye-open"
-        ></a> -->
-      </v-client-table>
+      <div class="container">
+        <h1 class="vue-title">Vue Tables 2 Editable Demo</h1>
+        <v-client-table
+          ref="countriesTable"
+          :columns="columns"
+          :data="tableData"
+          :options="options"
+        >
+          <!-- <a
+        slot="uri"
+        slot-scope="props"
+        target="_blank"
+        :href="props.row.uri"
+        class="glyphicon glyphicon-eye-open"
+      ></a> -->
+        </v-client-table>
+      </div>
     </div>
   </body>
   <script>
@@ -31,47 +48,90 @@
     function getData() {
       axios
         .get(
-          // "https://restcountries.com/v3/all?fields=flag,name,cca2,cca3,altSpellings,idd"
-          "https://restcountries.com/v3/all?fields=cca2,cca3"
+          "https://restcountries.com/v3/all?fields=flag,name,cca2,cca3,altSpellings,idd"
+          // "https://restcountries.com/v3/all?fields=flag,cca2,cca3"
         )
         .then(function (response) {
-          // handle success
-          return response.data;
-          console.log(response.data);
+          this.tableData = response.data;
+          console.log("aa", response.data);
         });
+      // for(let i =0;i<data.length;i++){
+      //   let arr = [];
+      //   if(arr[i].)
+      //   arr
+      // }
+      // return data;
+    }
+
+    function getFake() {
+      return [
+        {
+          code: "VU",
+          name: "Vanuatu",
+          created_at: "2015-04-24T01:46:50.441423",
+          updated_at: "2015-04-24T01:46:50.441433",
+          uri: "http://api.lobbyfacts.eu/api/1/country/238",
+          id: 238,
+        },
+        {
+          code: "UZ",
+          name: "Uzbekistan",
+          created_at: "2015-04-24T01:46:50.438748",
+          updated_at: "2015-04-24T01:46:50.438757",
+          uri: "http://api.lobbyfacts.eu/api/1/country/237",
+          id: 237,
+        },
+        {
+          code: "UY",
+          name: "Uruguay",
+          created_at: "2015-04-24T01:46:50.435761",
+          updated_at: "2015-04-24T01:46:50.435770",
+          uri: "http://api.lobbyfacts.eu/api/1/country/236",
+          id: 236,
+        },
+      ];
     }
 
     new Vue({
       el: "#app",
       data: {
         columns: [
-          //   "flag",
-          //   "name",
+          "flag",
+          "name",
           "cca2",
           "cca3",
-          //   "nativeName",
-          //   "altSpellings",
-          //   "idd",
+          "nativeName",
+          "altSpellings",
+          "idd",
         ],
-        tableData: getData(),
+        tableData: [],
         options: {
           headings: {
-            // flag: "國旗",
-            // name: "國家名稱",
+            flag: "國旗",
+            name: "國家名稱",
             cca2: "2 位國家代碼",
             cca3: "3 位國家代碼",
-            // nativeName: "母語名稱",
-            // altSpellings: "替代國家名稱",
-            // idd: "國際電話區號",
+            nativeName: "母語名稱",
+            altSpellings: "替代國家名稱",
+            idd: "國際電話區號",
           },
-          //   values: {
-          //     nmae: function (row, index) {
-          //       return row.official;
-          //     },
-          //   },
-          //   sortable: ["name", "code"],
-          //   filterable: ["name", "code"],
+          values: {
+            name: function (row, index) {
+              return row.official;
+            },
+          },
+          sortable: ["cca2", "cca3"],
+          filterable: ["cca2", "cca3"],
         },
+      },
+      async mounted() {
+        this.$refs.countriesTable.setLoadingState(true);
+        const { data } = await axios.get(
+          "https://restcountries.com/v3/all?fields=flag,name,cca2,cca3,altSpellings,idd"
+        );
+        this.tableData = data;
+        console.log(data);
+        this.$refs.countriesTable.setLoadingState(false);
       },
     });
   </script>
